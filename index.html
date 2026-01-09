@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Security+ Chapter 1 Learning Game</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#121a33;
+      --panel2:#0f162d;
+      --text:#e9ecf5;
+      --muted:#aab3d0;
+      --accent:#7aa7ff;
+      --good:#39d98a;
+      --bad:#ff5d5d;
+      --warn:#ffcc66;
+      --border:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(1200px 700px at 20% 0%, rgba(122,167,255,.20), transparent 55%),
+                  radial-gradient(900px 600px at 80% 10%, rgba(57,217,138,.14), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding:22px 18px 10px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    h1{
+      margin:0 0 6px 0;
+      font-size:20px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.35;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:12px 18px 30px;
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      gap:14px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .side .btn{
+      width:100%;
+      margin:8px 0;
+      justify-content:flex-start;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:600;
+      font-size:13px;
+      transition: transform .05s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.08); border-color: rgba(122,167,255,.35); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{ background: rgba(122,167,255,.16); border-color: rgba(122,167,255,.40); }
+    .btn.good{ background: rgba(57,217,138,.16); border-color: rgba(57,217,138,.42); }
+    .btn.bad{ background: rgba(255,93,93,.14); border-color: rgba(255,93,93,.42); }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:6px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      color:var(--muted);
+      font-size:12px;
+    }
+    .stat{
+      font-weight:700;
+      color:var(--text);
+      margin-left:4px;
+    }
+    .hr{ height:1px; background: var(--border); margin:12px 0; }
+    .title{
+      font-size:14px;
+      margin:0 0 8px 0;
+      color:var(--text);
+      letter-spacing:.2px;
+    }
+    .muted{ color:var(--muted); font-size:13px; line-height:1.45; }
+    .main{
+      min-height:560px;
+    }
+    .hidden{ display:none !important; }
+
+    /* Flashcard */
+    .flashcard{
+      margin-top:10px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.10));
+      padding:16px;
+    }
+    .fc-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .term{
+      font-size:18px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .tag{
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid var(--border);
+      padding:5px 8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .def{
+      margin-top:10px;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:13px;
+    }
+
+    /* Quiz */
+    .qbox{
+      margin-top:10px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      padding:16px;
+    }
+    .q{
+      font-size:15px;
+      font-weight:800;
+      margin:0 0 10px 0;
+    }
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      margin:8px 0;
+      user-select:none;
+    }
+    .opt:hover{ border-color: rgba(122,167,255,.35); background: rgba(255,255,255,.07); }
+    .opt.correct{ border-color: rgba(57,217,138,.55); background: rgba(57,217,138,.14); }
+    .opt.wrong{ border-color: rgba(255,93,93,.55); background: rgba(255,93,93,.10); }
+    .opt .k{
+      width:24px; height:24px;
+      border-radius:7px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid var(--border);
+      color:var(--muted);
+      font-weight:800;
+      font-size:12px;
+      flex:0 0 auto;
+      margin-top:1px;
+    }
+    .opt .t{ font-size:13px; line-height:1.35; }
+
+    /* Match */
+    .match-grid{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    .col-title{
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px 2px;
+      letter-spacing:.25px;
+      text-transform:uppercase;
+    }
+    .match-item{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      cursor:pointer;
+      user-select:none;
+      font-size:13px;
+      line-height:1.35;
+    }
+    .match-item:hover{ border-color: rgba(122,167,255,.35); background: rgba(255,255,255,.07); }
+    .match-item.sel{ outline:2px solid rgba(122,167,255,.65); }
+    .match-item.done{ border-color: rgba(57,217,138,.50); background: rgba(57,217,138,.12); cursor:default; }
+    .match-item.bad{ border-color: rgba(255,93,93,.55); background: rgba(255,93,93,.10); }
+    footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 18px 18px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+    code.inline{
+      padding:2px 6px;
+      border-radius:8px;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--border);
+      color: var(--text);
+    }
+    @media (max-width: 920px){
+      .wrap{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Security+ Chapter 1 Learning Game</h1>
+  <div class="sub">
+    Modes: Flashcards, Multiple Choice Quiz, Matching. Tracks your score and streak.
+    Focus: controls, CIA Triad, AAA, integrity & non-repudiation concepts.
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="card side">
+    <div class="title">Mode</div>
+    <button class="btn primary" id="btnFlash">Flashcards</button>
+    <button class="btn" id="btnQuiz">Multiple Choice</button>
+    <button class="btn" id="btnMatch">Matching</button>
+
+    <div class="hr"></div>
+
+    <div class="title">Stats</div>
+    <div class="row">
+      <div class="pill">Score <span class="stat" id="statScore">0</span></div>
+      <div class="pill">Streak <span class="stat" id="statStreak">0</span></div>
+    </div>
+    <div class="row" style="margin-top:8px;">
+      <div class="pill">Correct <span class="stat" id="statCorrect">0</span></div>
+      <div class="pill">Wrong <span class="stat" id="statWrong">0</span></div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="title">Controls</div>
+    <div class="row">
+      <button class="btn" id="btnReset">Reset Stats</button>
+      <button class="btn" id="btnShuffle">Shuffle</button>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="muted">
+      Tip: if you miss something, switch to Flashcards and review the definition before retrying the quiz.
+    </div>
+  </aside>
+
+  <main class="card main">
+    <!-- HOME / FLASH -->
+    <section id="viewFlash">
+      <div class="title">Flashcards</div>
+      <div class="muted">Click <span class="inline code">Reveal</span> to show the definition. Then mark Correct/Wrong.</div>
+
+      <div class="flashcard" id="flashCard">
+        <div class="fc-top">
+          <div>
+            <div class="term" id="fcTerm">—</div>
+            <div class="muted" id="fcAbbrev" style="margin-top:6px;"></div>
+          </div>
+          <div class="tag" id="fcTag">—</div>
+        </div>
+        <div class="def hidden" id="fcDef">—</div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <button class="btn primary" id="btnReveal">Reveal</button>
+          <button class="btn good" id="btnFlashCorrect">Correct</button>
+          <button class="btn bad" id="btnFlashWrong">Wrong</button>
+          <button class="btn" id="btnNextFlash">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="viewQuiz" class="hidden">
+      <div class="title">Multiple Choice Quiz</div>
+      <div class="muted">Choose the best answer. You get points for correct answers and build a streak.</div>
+
+      <div class="qbox">
+        <div class="q" id="qText">—</div>
+        <div id="qOptions"></div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <button class="btn" id="btnNextQ">Next Question</button>
+          <span class="muted" id="qFeedback"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MATCH -->
+    <section id="viewMatch" class="hidden">
+      <div class="title">Matching</div>
+      <div class="muted">Click a Term (left) and its Definition (right). Match all pairs to win.</div>
+
+      <div class="match-grid">
+        <div>
+          <div class="col-title">Terms</div>
+          <div id="matchTerms"></div>
+        </div>
+        <div>
+          <div class="col-title">Definitions</div>
+          <div id="matchDefs"></div>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="row">
+        <button class="btn" id="btnNewMatch">New Match Round</button>
+        <span class="muted" id="matchStatus">—</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  Content is based on your Chapter 1 notes (controls, CIA triad, AAA, integrity/non-repudiation, etc.).
+  Open this file directly in your browser—no installs needed.
+</footer>
+
+<script>
+  /**********************
+   * Chapter 1 Data Set *
+   **********************/
+  const CARDS = [
+    {
+      term: "CIA Triad",
+      abbrev: "CIA = Confidentiality, Integrity, Availability",
+      def: "A foundational security model: Confidentiality prevents unauthorized disclosure, Integrity prevents unauthorized modification, and Availability ensures systems/data are accessible to authorized users.",
+      tag: "Core Model"
+    },
+    {
+      term: "Confidentiality",
+      abbrev: "",
+      def: "Ensures information is only accessible to authorized users. Common examples include encryption, access controls, and multi-factor authentication.",
+      tag: "CIA"
+    },
+    {
+      term: "Integrity",
+      abbrev: "",
+      def: "Ensures data is stored/transferred as intended and not altered. Common examples include hashing, digital signatures, certificates, and non-repudiation controls.",
+      tag: "CIA"
+    },
+    {
+      term: "Availability",
+      abbrev: "",
+      def: "Ensures information/systems are accessible to authorized users. Common examples include redundancy, fault tolerance, and patching for stability/security.",
+      tag: "CIA"
+    },
+    {
+      term: "AAA Framework",
+      abbrev: "AAA = Authentication, Authorization, Accounting (and often Identification)",
+      def: "A framework for access control: Identification (who you claim to be), Authentication (prove it), Authorization (what you can access), Accounting (log what happened).",
+      tag: "Access Control"
+    },
+    {
+      term: "Authentication",
+      abbrev: "",
+      def: "Proving an identity claim (e.g., password, MFA factors, certificates). Authentication answers: 'Are you really who you say you are?'",
+      tag: "AAA"
+    },
+    {
+      term: "Authorization",
+      abbrev: "",
+      def: "Determining what an authenticated user/system is allowed to do (permissions/rights). Authorization answers: 'What can you access or perform?'",
+      tag: "AAA"
+    },
+    {
+      term: "Accounting",
+      abbrev: "",
+      def: "Recording and logging activity (login time, data sent/received, logout time). Supports auditing and investigations.",
+      tag: "AAA"
+    },
+    {
+      term: "Non-repudiation",
+      abbrev: "",
+      def: "Provides proof of origin and integrity so someone cannot credibly deny an action/statement (e.g., signed contracts using digital signatures).",
+      tag: "Integrity"
+    },
+    {
+      term: "Hash",
+      abbrev: "",
+      def: "A one-way function that produces a fixed-length digest from input data. If the data changes, the hash changes—useful for integrity verification.",
+      tag: "Integrity"
+    },
+    {
+      term: "Digital Signature",
+      abbrev: "",
+      def: "Uses asymmetric crypto: sign with a private key, verify with a public key. Provides integrity, authentication, and non-repudiation when properly implemented.",
+      tag: "PKI"
+    },
+    {
+      term: "Certificate Authority",
+      abbrev: "CA = Certificate Authority",
+      def: "A trusted entity that issues and signs digital certificates, binding identities to public keys to establish trust.",
+      tag: "PKI"
+    },
+    {
+      term: "Technical Controls",
+      abbrev: "",
+      def: "Controls implemented using systems/technology (e.g., OS controls, firewalls, anti-malware).",
+      tag: "Controls"
+    },
+    {
+      term: "Managerial Controls",
+      abbrev: "",
+      def: "Administrative controls tied to security design and implementation (e.g., security policies, standard operating procedures).",
+      tag: "Controls"
+    },
+    {
+      term: "Operational Controls",
+      abbrev: "",
+      def: "Controls implemented by people (e.g., security guards, awareness training programs).",
+      tag: "Controls"
+    },
+    {
+      term: "Physical Controls",
+      abbrev: "",
+      def: "Controls that limit physical access (e.g., fences, locks, badge readers, guard shacks).",
+      tag: "Controls"
+    },
+    {
+      term: "Preventive Control",
+      abbrev: "",
+      def: "A control intended to stop an incident from occurring (blocks access or prevents action).",
+      tag: "Control Type"
+    },
+    {
+      term: "Detective Control",
+      abbrev: "",
+      def: "A control intended to identify events or alert on suspicious activity (detects and warns).",
+      tag: "Control Type"
+    },
+    {
+      term: "Corrective Control",
+      abbrev: "",
+      def: "A control that is applied after an event to fix/restore (response/remediation).",
+      tag: "Control Type"
+    },
+    {
+      term: "Deterrent Control",
+      abbrev: "",
+      def: "A control intended to discourage attempts (reduces likelihood by making attack less attractive).",
+      tag: "Control Type"
+    },
+    {
+      term: "Compensating Control",
+      abbrev: "",
+      def: "An alternative control used when the primary control is not feasible; reduces risk using other means.",
+      tag: "Control Type"
+    },
+    {
+      term: "Directive Control",
+      abbrev: "",
+      def: "A control that directs behavior toward compliance (policies, procedures, signage, standards).",
+      tag: "Control Type"
+    }
+  ];
+
+  /*****************
+   * App Utilities *
+   *****************/
+  const $ = (id) => document.getElementById(id);
+  const shuffle = (arr) => {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+  const pickN = (arr, n) => shuffle(arr).slice(0, n);
+
+  /*********
+   * State *
+   *********/
+  const state = {
+    deck: shuffle(CARDS),
+    flashIndex: 0,
+    score: 0,
+    streak: 0,
+    correct: 0,
+    wrong: 0,
+    // quiz
+    currentQ: null,
+    // match
+    matchPairs: [],
+    matchSelected: { left: null, right: null },
+    matchDone: new Set()
+  };
+
+  function saveStats(){
+    localStorage.setItem("ch1_stats_v1", JSON.stringify({
+      score: state.score, streak: state.streak, correct: state.correct, wrong: state.wrong
+    }));
+  }
+  function loadStats(){
+    try{
+      const raw = localStorage.getItem("ch1_stats_v1");
+      if(!raw) return;
+      const s = JSON.parse(raw);
+      state.score = s.score ?? 0;
+      state.streak = s.streak ?? 0;
+      state.correct = s.correct ?? 0;
+      state.wrong = s.wrong ?? 0;
+    } catch {}
+  }
+  function renderStats(){
+    $("statScore").textContent = state.score;
+    $("statStreak").textContent = state.streak;
+    $("statCorrect").textContent = state.correct;
+    $("statWrong").textContent = state.wrong;
+  }
+
+  /****************
+   * View Switch  *
+   ****************/
+  function show(view){
+    $("viewFlash").classList.add("hidden");
+    $("viewQuiz").classList.add("hidden");
+    $("viewMatch").classList.add("hidden");
+    $(view).classList.remove("hidden");
+
+    // update side buttons
+    $("btnFlash").classList.remove("primary");
+    $("btnQuiz").classList.remove("primary");
+    $("btnMatch").classList.remove("primary");
+    if(view === "viewFlash") $("btnFlash").classList.add("primary");
+    if(view === "viewQuiz") $("btnQuiz").classList.add("primary");
+    if(view === "viewMatch") $("btnMatch").classList.add("primary");
+  }
+
+  /****************
+   * Flashcards   *
+   ****************/
+  function currentCard(){
+    return state.deck[state.flashIndex % state.deck.length];
+  }
+  function renderFlash(){
+    const c = currentCard();
+    $("fcTerm").textContent = c.term;
+    $("fcAbbrev").textContent = c.abbrev ? c.abbrev : "";
+    $("fcTag").textContent = c.tag || "Chapter 1";
+    $("fcDef").textContent = c.def;
+    $("fcDef").classList.add("hidden");
+    $("btnReveal").textContent = "Reveal";
+  }
+  function nextFlash(){
+    state.flashIndex = (state.flashIndex + 1) % state.deck.length;
+    renderFlash();
+  }
+  function mark(correct){
+    if(correct){
+      state.correct++;
+      state.streak++;
+      state.score += 10 + Math.min(state.streak, 10); // small streak bonus capped
+    } else {
+      state.wrong++;
+      state.streak = 0;
+      state.score = Math.max(0, state.score - 5);
+    }
+    saveStats();
+    renderStats();
+  }
+
+  /****************
+   * Quiz (MCQ)   *
+   ****************/
+  function makeQuestion(){
+    // pick an answer card and create "definition -> term" question
+    const answer = pickN(CARDS, 1)[0];
+    const distractors = pickN(CARDS.filter(x => x.term !== answer.term), 3).map(x => x.term);
+    const options = shuffle([answer.term, ...distractors]);
+
+    return {
+      prompt: "Which term best matches this definition?",
+      stem: answer.def,
+      answer: answer.term,
+      options
+    };
+  }
+
+  function renderQuestion(){
+    state.currentQ = makeQuestion();
+    $("qFeedback").textContent = "";
+    $("qText").textContent = state.currentQ.prompt + "  " + state.currentQ.stem;
+
+    const letters = ["A","B","C","D"];
+    const wrap = $("qOptions");
+    wrap.innerHTML = "";
+
+    state.currentQ.options.forEach((opt, idx) => {
+      const div = document.createElement("div");
+      div.className = "opt";
+      div.setAttribute("data-opt", opt);
+
+      const k = document.createElement("div");
+      k.className = "k";
+      k.textContent = letters[idx];
+
+      const t = document.createElement("div");
+      t.className = "t";
+      t.textContent = opt;
+
+      div.appendChild(k);
+      div.appendChild(t);
+
+      div.addEventListener("click", () => gradeQuestion(div));
+      wrap.appendChild(div);
+    });
+  }
+
+  function gradeQuestion(clickedEl){
+    // prevent double grading
+    const opts = Array.from(document.querySelectorAll("#qOptions .opt"));
+    if(opts.some(o => o.classList.contains("correct") || o.classList.contains("wrong"))) return;
+
+    const chosen = clickedEl.getAttribute("data-opt");
+    const isCorrect = chosen === state.currentQ.answer;
+
+    opts.forEach(o => {
+      const v = o.getAttribute("data-opt");
+      if(v === state.currentQ.answer) o.classList.add("correct");
+      if(v === chosen && !isCorrect) o.classList.add("wrong");
+    });
+
+    if(isCorrect){
+      $("qFeedback").textContent = "Correct. +points and streak increased.";
+      $("qFeedback").style.color = "var(--good)";
+      mark(true);
+    } else {
+      $("qFeedback").textContent = `Wrong. Correct answer: ${state.currentQ.answer}`;
+      $("qFeedback").style.color = "var(--bad)";
+      mark(false);
+    }
+  }
+
+  /****************
+   * Matching     *
+   ****************/
+  function newMatchRound(){
+    state.matchSelected = { left: null, right: null };
+    state.matchDone = new Set();
+
+    // choose 6 pairs for the round
+    const pairs = pickN(CARDS, 6).map(c => ({ term: c.term, def: c.def }));
+    state.matchPairs = pairs;
+
+    // render left and right columns (shuffle both independently)
+    const termCol = $("matchTerms");
+    const defCol = $("matchDefs");
+    termCol.innerHTML = "";
+    defCol.innerHTML = "";
+
+    const terms = shuffle(pairs.map(p => p.term));
+    const defs  = shuffle(pairs.map(p => p.def));
+
+    terms.forEach(term => {
+      const div = document.createElement("div");
+      div.className = "match-item";
+      div.textContent = term;
+      div.setAttribute("data-term", term);
+      div.addEventListener("click", () => selectMatch("left", div));
+      termCol.appendChild(div);
+    });
+
+    defs.forEach(def => {
+      const div = document.createElement("div");
+      div.className = "match-item";
+      div.textContent = def;
+      div.setAttribute("data-def", def);
+      div.addEventListener("click", () => selectMatch("right", div));
+      defCol.appendChild(div);
+    });
+
+    $("matchStatus").textContent = "Match all pairs to complete the round.";
+    $("matchStatus").style.color = "var(--muted)";
+  }
+
+  function selectMatch(side, el){
+    if(el.classList.contains("done")) return;
+
+    // clear previous selection on that side
+    const selector = side === "left" ? "#matchTerms .match-item" : "#matchDefs .match-item";
+    document.querySelectorAll(selector).forEach(x => x.classList.remove("sel"));
+
+    el.classList.add("sel");
+    if(side === "left"){
+      state.matchSelected.left = el;
+    } else {
+      state.matchSelected.right = el;
+    }
+
+    // if both selected, evaluate
+    if(state.matchSelected.left && state.matchSelected.right){
+      const term = state.matchSelected.left.getAttribute("data-term");
+      const def  = state.matchSelected.right.getAttribute("data-def");
+      const isPair = state.matchPairs.some(p => p.term === term && p.def === def);
+
+      if(isPair){
+        state.matchSelected.left.classList.remove("sel");
+        state.matchSelected.right.classList.remove("sel");
+        state.matchSelected.left.classList.add("done");
+        state.matchSelected.right.classList.add("done");
+
+        state.matchDone.add(term);
+
+        $("matchStatus").textContent = `Correct match. Pairs completed: ${state.matchDone.size}/${state.matchPairs.length}`;
+        $("matchStatus").style.color = "var(--good)";
+        mark(true);
+      } else {
+        // flash wrong styling briefly
+        state.matchSelected.left.classList.add("bad");
+        state.matchSelected.right.classList.add("bad");
+        $("matchStatus").textContent = "Not a match. Try again.";
+        $("matchStatus").style.color = "var(--bad)";
+        mark(false);
+
+        setTimeout(() => {
+          state.matchSelected.left.classList.remove("bad","sel");
+          state.matchSelected.right.classList.remove("bad","sel");
+          state.matchSelected.left = null;
+          state.matchSelected.right = null;
+        }, 550);
+        return;
+      }
+
+      state.matchSelected.left = null;
+      state.matchSelected.right = null;
+
+      if(state.matchDone.size === state.matchPairs.length){
+        $("matchStatus").textContent = "Round complete. Start a new round to continue.";
+        $("matchStatus").style.color = "var(--warn)";
+      }
+    }
+  }
+
+  /****************
+   * Wire Events  *
+   ****************/
+  $("btnFlash").addEventListener("click", () => { show("viewFlash"); renderFlash(); });
+  $("btnQuiz").addEventListener("click", () => { show("viewQuiz"); renderQuestion(); });
+  $("btnMatch").addEventListener("click", () => { show("viewMatch"); newMatchRound(); });
+
+  $("btnReveal").addEventListener("click", () => {
+    const d = $("fcDef");
+    const hidden = d.classList.contains("hidden");
+    d.classList.toggle("hidden");
+    $("btnReveal").textContent = hidden ? "Hide" : "Reveal";
+  });
+  $("btnFlashCorrect").addEventListener("click", () => { mark(true); nextFlash(); });
+  $("btnFlashWrong").addEventListener("click", () => { mark(false); nextFlash(); });
+  $("btnNextFlash").addEventListener("click", nextFlash);
+
+  $("btnNextQ").addEventListener("click", renderQuestion);
+
+  $("btnNewMatch").addEventListener("click", newMatchRound);
+
+  $("btnReset").addEventListener("click", () => {
+    state.score = 0; state.streak = 0; state.correct = 0; state.wrong = 0;
+    saveStats(); renderStats();
+    $("qFeedback").textContent = "";
+    $("matchStatus").textContent = "Stats reset.";
+    $("matchStatus").style.color = "var(--muted)";
+  });
+
+  $("btnShuffle").addEventListener("click", () => {
+    state.deck = shuffle(CARDS);
+    state.flashIndex = 0;
+    renderFlash();
+    $("qFeedback").textContent = "Deck shuffled.";
+    $("qFeedback").style.color = "var(--muted)";
+  });
+
+  /****************
+   * Init         *
+   ****************/
+  loadStats();
+  renderStats();
+  show("viewFlash");
+  renderFlash();
+</script>
+</body>
+</html>
